@@ -1,7 +1,9 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -53,7 +55,51 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return List.of();
+        ChessPiece piece = board.getPiece(myPosition);
+        List<ChessMove> moves = new ArrayList<>();
+        if(piece.getPieceType() == PieceType.BISHOP) {
+            for (int i = 1; i <= 7; i++) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + i), null));
+            }
+            for (int i = 1; i <= 7; i++) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() - i), null));
+            }
+            for (int i = 1; i <= 7; i++) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() - i), null));
+            }
+            for (int i = 1; i <= 7; i++) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() + i), null));
+            }
+        }
+        int size = board.place.length;
+        List<ChessMove> valid_moves = new ArrayList<>();
+        for(ChessMove move : moves) {
+            ChessPosition end = move.getEndPosition();
+            int row = end.getRow();
+            int col = end.getColumn();
+            if(row > size|| row < 1){
+                continue;
+            }
+            if (col > size|| col < 1){
+                continue;
+            }
+            valid_moves.add(move);
+        }
+        return valid_moves;
+        //I now need to add in the broad functionality of what each chess piece can and can not do
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
+    }
 }
