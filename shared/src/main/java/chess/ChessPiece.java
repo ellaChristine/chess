@@ -71,6 +71,7 @@ public class ChessPiece {
                 moves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() + i), null));
             }
         }
+
         int size = board.place.length;
         List<ChessMove> valid_moves = new ArrayList<>();
         for(ChessMove move : moves) {
