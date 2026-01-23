@@ -138,20 +138,23 @@ public class ChessPiece {
                 if(new_row >8 || new_row < 1 || new_col >8||new_col<1){
                     break;
                 }
-                moves.addAll(kingMoves(board, myPosition, row[i],col[i]));
+                moves.addAll(stepMoves(board, myPosition, row[i],col[i]));
             }
             return moves;
         }
 
         if(piece.getPieceType()== PieceType.KNIGHT){
-            moves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn() - 1), null));
-            moves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn()+1), null));
-            moves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() +2), null));
-            moves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow()-1, myPosition.getColumn() +2), null));
-            moves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow()-2, myPosition.getColumn() + 1), null));
-            moves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn() - 1), null));
-            moves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn()-2), null));
-            moves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() +1, myPosition.getColumn() -2), null));
+            int[] row = new int[]{2,2,1,-1,-2,-2,-1,1};
+            int[] col = new int[]{-1,1,2,2,1,-1,-2,-2};
+            for(int i=0; i<=7; i++){
+                int new_row = myPosition.getRow() + row[i];
+                int new_col = myPosition.getColumn() + col[i];
+                if(new_row >8 || new_row < 1 || new_col >8||new_col<1){
+                    continue;
+                }
+                moves.addAll(stepMoves(board, myPosition, row[i],col[i]));
+            }
+            return moves;
         }
 
         if(piece.getPieceType()== PieceType.PAWN){
@@ -197,7 +200,7 @@ public class ChessPiece {
     public int hashCode() {
         return Objects.hash(pieceColor, type);
     }
-    private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition, Integer rowInt,Integer colInt){
+    private Collection<ChessMove> stepMoves(ChessBoard board, ChessPosition myPosition, Integer rowInt,Integer colInt){
         ChessPiece piece = board.getPiece(myPosition);
         List<ChessMove> moves = new ArrayList<>();
         ChessPiece destination = board.getPiece(new ChessPosition(myPosition.getRow()+rowInt, myPosition.getColumn()+colInt));
