@@ -60,69 +60,28 @@ public class ChessPiece {
         List<ChessMove> moves = new ArrayList<>();
         if (piece.getPieceType() == PieceType.BISHOP || piece.getPieceType() == PieceType.QUEEN) {
             for (int i = 1; i <= 7; i++) {
-                int new_row = myPosition.getRow() + i;
-                int new_col = myPosition.getColumn() + i;
-                if (new_row > 8 || new_row < 1 || new_col > 8 || new_col < 1) {
+                if(!checkMoves(board, myPosition, i, 0, moves)){
                     break;
-                }
-                ChessPiece destination = board.getPiece(new ChessPosition(new_row, new_col));
-                if (destination != null) {
-                    if (destination.getTeamColor() != piece.getTeamColor()) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(new_row, new_col), null));
-                    }
-                    break;
-                } else {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(new_row, new_col), null));
                 }
             }
             for (int i = 1; i <= 7; i++) {
-                int new_row = myPosition.getRow() - i;
-                int new_col = myPosition.getColumn() - i;
-                if (new_row > 8 || new_row < 1 || new_col > 8 || new_col < 1) {
+                if(!checkMoves(board, myPosition, 0, i, moves)){
                     break;
-                }
-                ChessPiece destination = board.getPiece(new ChessPosition(new_row, new_col));
-                if (destination != null) {
-                    if (destination.getTeamColor() != piece.getTeamColor()) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(new_row, new_col), null));
-                    }
-                    break;
-                } else {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(new_row, new_col), null));
                 }
             }
             for (int i = 1; i <= 7; i++) {
-                int new_row = myPosition.getRow() + i;
-                int new_col = myPosition.getColumn() - i;
-                if (new_row > 8 || new_row < 1 || new_col > 8 || new_col < 1) {
+                if(!checkMoves(board, myPosition, -i, 0, moves)){
                     break;
-                }
-                ChessPiece destination = board.getPiece(new ChessPosition(new_row, new_col));
-                if (destination != null) {
-                    if (destination.getTeamColor() != piece.getTeamColor()) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(new_row, new_col), null));
-                    }
-                    break;
-                } else {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(new_row, new_col), null));
                 }
             }
             for (int i = 1; i <= 7; i++) {
-                int new_row = myPosition.getRow() - i;
-                int new_col = myPosition.getColumn() + i;
-                if (new_row > 8 || new_row < 1 || new_col > 8 || new_col < 1) {
+                if(!checkMoves(board, myPosition, 0, -i, moves)){
                     break;
-                }
-                ChessPiece destination = board.getPiece(new ChessPosition(new_row, new_col));
-                if (destination != null) {
-                    if (destination.getTeamColor() != piece.getTeamColor()) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(new_row, new_col), null));
-                    }
-                    break;
-                } else {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(new_row, new_col), null));
                 }
             }
+
+
+
         }
 
         if (piece.getPieceType() == PieceType.KING) {
@@ -275,27 +234,25 @@ public class ChessPiece {
 
         if (piece.getPieceType() == PieceType.ROOK|| piece.getPieceType() == PieceType.QUEEN) {
             for (int i = 1; i <= 7; i++) {
-                if(!checkMoves(board, myPosition, i, 0, moves)){
+                if(!checkMoves(board, myPosition, i, i, moves)){
                     break;
                 }
             }
             for (int i = 1; i <= 7; i++) {
-                if(!checkMoves(board, myPosition, 0, i, moves)){
+                if(!checkMoves(board, myPosition, -i, -i, moves)){
                     break;
                 }
             }
             for (int i = 1; i <= 7; i++) {
-                if(!checkMoves(board, myPosition, -i, 0, moves)){
+                if(!checkMoves(board, myPosition, i, -i, moves)){
                     break;
                 }
             }
             for (int i = 1; i <= 7; i++) {
-                if(!checkMoves(board, myPosition, 0, -i, moves)){
+                if(!checkMoves(board, myPosition, -i, i, moves)){
                     break;
                 }
             }
-
-
             return moves;
         }
 
