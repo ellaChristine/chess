@@ -60,54 +60,43 @@ public class ChessPiece {
         List<ChessMove> moves = new ArrayList<>();
         if (piece.getPieceType() == PieceType.BISHOP || piece.getPieceType() == PieceType.QUEEN) {
             for (int i = 1; i <= 7; i++) {
-                if(!checkMoves(board, myPosition, i, 0, moves)){
+                if(!checkMoves(board, myPosition, i, i, moves)){
                     break;
                 }
             }
             for (int i = 1; i <= 7; i++) {
-                if(!checkMoves(board, myPosition, 0, i, moves)){
+                if(!checkMoves(board, myPosition, -i, -i, moves)){
                     break;
                 }
             }
             for (int i = 1; i <= 7; i++) {
-                if(!checkMoves(board, myPosition, -i, 0, moves)){
+                if(!checkMoves(board, myPosition, -i, i, moves)){
                     break;
                 }
             }
             for (int i = 1; i <= 7; i++) {
-                if(!checkMoves(board, myPosition, 0, -i, moves)){
+                if(!checkMoves(board, myPosition, i, -i, moves)){
                     break;
                 }
             }
-
-
-
         }
 
         if (piece.getPieceType() == PieceType.KING) {
-            int[] row = new int[]{1, 1, 0, -1, -1, -1, 0, 1};
-            int[] col = new int[]{0, 1, 1, 1, 0, -1, -1, -1};
+            int[] row = new int[]{1, 1, 0, -1, -1, -1, 0, 1};int[] col = new int[]{0, 1, 1, 1, 0, -1, -1, -1};
             for (int i = 0; i <= 7; i++) {
-                int new_row = myPosition.getRow() + row[i];
-                int new_col = myPosition.getColumn() + col[i];
-                if (new_row > 8 || new_row < 1 || new_col > 8 || new_col < 1) {
-                    break;
+                if(isInBounds(new ChessPosition(myPosition.getRow()+ row[i], myPosition.getColumn()+col[i]))){
+                    checkMoves(board, myPosition, row[i], col[i], moves);
                 }
-                checkMoves(board, myPosition, row[i], col[i], moves);
             }
             return moves;
         }
 
         if (piece.getPieceType() == PieceType.KNIGHT) {
-            int[] row = new int[]{2, 2, 1, -1, -2, -2, -1, 1};
-            int[] col = new int[]{-1, 1, 2, 2, 1, -1, -2, -2};
+            int[] row = new int[]{2, 2, 1, -1, -2, -2, -1, 1};int[] col = new int[]{-1, 1, 2, 2, 1, -1, -2, -2};
             for (int i = 0; i <= 7; i++) {
-                int new_row = myPosition.getRow() + row[i];
-                int new_col = myPosition.getColumn() + col[i];
-                if (new_row > 8 || new_row < 1 || new_col > 8 || new_col < 1) {
-                    continue;
+                if(isInBounds(new ChessPosition(myPosition.getRow()+ row[i], myPosition.getColumn()+col[i]))){
+                    checkMoves(board, myPosition, row[i], col[i], moves);
                 }
-                checkMoves(board, myPosition, row[i], col[i], moves);
             }
             return moves;
         }
@@ -234,44 +223,28 @@ public class ChessPiece {
 
         if (piece.getPieceType() == PieceType.ROOK|| piece.getPieceType() == PieceType.QUEEN) {
             for (int i = 1; i <= 7; i++) {
-                if(!checkMoves(board, myPosition, i, i, moves)){
+                if(!checkMoves(board, myPosition, i, 0, moves)){
                     break;
                 }
             }
             for (int i = 1; i <= 7; i++) {
-                if(!checkMoves(board, myPosition, -i, -i, moves)){
+                if(!checkMoves(board, myPosition, 0, i, moves)){
                     break;
                 }
             }
             for (int i = 1; i <= 7; i++) {
-                if(!checkMoves(board, myPosition, i, -i, moves)){
+                if(!checkMoves(board, myPosition, -i, 0, moves)){
                     break;
                 }
             }
             for (int i = 1; i <= 7; i++) {
-                if(!checkMoves(board, myPosition, -i, i, moves)){
+                if(!checkMoves(board, myPosition, 0, -i, moves)){
                     break;
                 }
             }
-            return moves;
         }
 
-        int size = board.place.length;
-        List<ChessMove> valid_moves = new ArrayList<>();
-        for (ChessMove move : moves) {
-            ChessPosition end = move.getEndPosition();
-            int row = end.getRow();
-            int col = end.getColumn();
-            if (row > size || row < 1) {
-                continue;
-            }
-            if (col > size || col < 1) {
-                continue;
-            }
-            valid_moves.add(move);
-        }
-        return valid_moves;
-        //I now need to add in the broad functionality of what each chess piece can and can not do
+        return moves;
     }
 
     @Override
@@ -311,6 +284,5 @@ public class ChessPiece {
 
     private boolean isInBounds(ChessPosition position) {
         return position.getRow() <= 8 && position.getRow() >= 1 && position.getColumn() <= 8 && position.getColumn() >= 1;
-
     }
 }
