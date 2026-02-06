@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -53,7 +55,44 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        // get the piece from the start position
+        ChessPiece piece = board.getPiece(startPosition);
+        List<ChessMove> valid = new ArrayList<>();
+        //check to see if the piece is null(if it is return null)
+        if(piece == null){
+            return null;
+        }
+        //get all the pieceMoves for that piece:
+        Collection<ChessMove> possibleMoves = piece.pieceMoves(board, startPosition);
+        //for each move:
+        for(ChessMove move:possibleMoves){
+            ChessBoard newBoard = makeCopy();
+
+        }
+
+        //execute the move on the copy
+        //check if your own king is in check after the move
+        //if not in check, keep the move; if in check, discard it
+        //return the filtered collection of valid moves.
+        return valid;
+    }
+
+    private ChessBoard makeCopy() {
+        //create a new empty board
+        ChessBoard copy = new ChessBoard();
+        // for row, col in this.board check to see if there is a piece at each position
+        for(int r = 1; r<=8; r++){
+            for(int c = 1; c<=8; c++){
+                ChessPosition position = new ChessPosition(r,c);
+                if(this.board.getPiece(position) != null){
+                    // create a new chess piece object that has the same properties as the original
+                    ChessPiece old = this.board.getPiece(position);
+                    ChessPiece newPiece = new ChessPiece(old.getTeamColor(),old.getPieceType());
+                    copy.addPiece(position, newPiece);
+                }
+            }
+        }
+        return copy;
     }
 
     /**
