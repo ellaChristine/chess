@@ -67,14 +67,48 @@ public class ChessGame {
         //for each move:
         for(ChessMove move:possibleMoves){
             ChessBoard newBoard = makeCopy();
+            ChessPiece newPiece = newBoard.getPiece(startPosition);
+            newBoard.addPiece(move.getStartPosition(),null);
 
+            if(move.getPromotionPiece() != null){
+                ChessPiece.PieceType promotion = move.getPromotionPiece();
+                newBoard.addPiece(move.getEndPosition(),new ChessPiece(newPiece.getTeamColor(),promotion));
+            }
+            else{
+                newBoard.addPiece(move.getEndPosition(),newPiece);
+            }
+            if(!isCopyInCheck(newPiece.getTeamColor(),newBoard)){
+                valid.add(move);
+            }
         }
 
-        //execute the move on the copy
+
         //check if your own king is in check after the move
         //if not in check, keep the move; if in check, discard it
         //return the filtered collection of valid moves.
         return valid;
+    }
+    private boolean isCopyInCheck(TeamColor teamColor, ChessBoard board) {
+        ChessPosition kingPosition = findNewKing(teamColor, board);
+
+        //loop through the board
+        return goThroughBoard(teamColor, kingPosition, board);
+    }
+
+    private ChessPosition findNewKing(TeamColor teamColor, ChessBoard board) {
+        for(int x = 1; x<=8; x++){
+            for(int y = 1; y<=8; y++){
+                ChessPosition position = new ChessPosition(x,y);
+                ChessPiece piece = board.getPiece(position);
+
+                if(piece != null && piece.getTeamColor() == teamColor && piece.getPieceType() == ChessPiece.PieceType.KING){
+                    return position;
+
+                }
+
+            }
+        }
+        return null;
     }
 
     private ChessBoard makeCopy() {
@@ -115,6 +149,10 @@ public class ChessGame {
         ChessPosition kingPosition = findKing(teamColor);
 
         //loop through the board
+        return goThroughBoard(teamColor, kingPosition, board);
+    }
+
+    private boolean goThroughBoard(TeamColor teamColor, ChessPosition kingPosition, ChessBoard board) {
         for(int x=1; x<=8; x++){
             for(int y = 1; y<=8; y++){
                 ChessPosition position = new ChessPosition(x,y);
