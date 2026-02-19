@@ -177,9 +177,7 @@ public class ChessGame {
                     if(!valid.isEmpty()){
                         return false;
                     }
-
                 }
-
             }
         }
         return true;
@@ -224,6 +222,7 @@ public class ChessGame {
         }
         return false;
     }
+
     private ChessPosition findKing(TeamColor teamColor) {
         for(int x = 1; x<=8; x++){
             for(int y = 1; y<=8; y++){
@@ -239,12 +238,14 @@ public class ChessGame {
         }
         return null;
     }
+
     private boolean isCopyInCheck(TeamColor teamColor, ChessBoard board) {
         ChessPosition kingPosition = findNewKing(teamColor, board);
 
         //loop through the board
         return goThroughBoard(teamColor, kingPosition, board);
     }
+
     private ChessPosition findNewKing(TeamColor teamColor, ChessBoard board) {
         for(int x = 1; x<=8; x++){
             for(int y = 1; y<=8; y++){
