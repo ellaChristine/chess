@@ -1,5 +1,6 @@
 package chess;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -84,22 +85,13 @@ public class ChessPiece {
 
         if (piece.getPieceType() == PieceType.KING) {
             int[] row = new int[]{1, 1, 0, -1, -1, -1, 0, 1};int[] col = new int[]{0, 1, 1, 1, 0, -1, -1, -1};
-            for (int i = 0; i <= 7; i++) {
-                if(isInBounds(new ChessPosition(myPosition.getRow()+ row[i], myPosition.getColumn()+col[i]))){
-                    checkMoves(board, myPosition, row[i], col[i], moves);
-                }
-            }
-            return moves;
+            return makeDefinedMoves(board, myPosition, row, col);
         }
 
         if (piece.getPieceType() == PieceType.KNIGHT) {
             int[] row = new int[]{2, 2, 1, -1, -2, -2, -1, 1};int[] col = new int[]{-1, 1, 2, 2, 1, -1, -2, -2};
-            for (int i = 0; i <= 7; i++) {
-                if(isInBounds(new ChessPosition(myPosition.getRow()+ row[i], myPosition.getColumn()+col[i]))){
-                    checkMoves(board, myPosition, row[i], col[i], moves);
-                }
-            }
-            return moves;
+
+            return makeDefinedMoves(board, myPosition, row, col);
         }
 
         if (piece.getPieceType() == PieceType.PAWN) {
@@ -113,12 +105,12 @@ public class ChessPiece {
             }
 
             if (piece.pieceColor == ChessGame.TeamColor.BLACK) {
-                ChessPosition move_1 = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn());
-                ChessPosition move_2 = new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn());
+                ChessPosition move1 = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn());
+                ChessPosition move2 = new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn());
                 ChessPosition capture1 = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1);
                 ChessPosition capture2 = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1);
 
-                return pawnMoves(board, myPosition,move_1,move_2,7,2,capture1,capture2);
+                return pawnMoves(board, myPosition,move1,move2,7,2,capture1,capture2);
             }
         }
 
@@ -161,7 +153,16 @@ public class ChessPiece {
     public int hashCode() {
         return Objects.hash(pieceColor, type);
     }
-
+    private Collection<ChessMove> makeDefinedMoves(ChessBoard board, ChessPosition myPosition, int[] row, int[] col){
+        ChessPiece piece = board.getPiece(myPosition);
+        List<ChessMove> moves = new ArrayList<>();
+        for (int i = 0; i <= 7; i++) {
+            if(isInBounds(new ChessPosition(myPosition.getRow()+ row[i], myPosition.getColumn()+col[i]))){
+                checkMoves(board, myPosition, row[i], col[i], moves);
+            }
+        }
+        return moves;
+    }
     private boolean checkMoves(ChessBoard board, ChessPosition myPosition, Integer rowInt, Integer colInt,
                                Collection<ChessMove> moves) {
         ChessPiece piece = board.getPiece(myPosition);

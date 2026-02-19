@@ -133,7 +133,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        ChessPosition kingPosition = findKing(teamColor);
+        ChessPosition kingPosition = findKing(teamColor, this.board);
 
         //loop through the board
         return goThroughBoard(teamColor, kingPosition, board);
@@ -208,45 +208,35 @@ public class ChessGame {
                 ChessPiece piece = board.getPiece(position);
 
                 //if the position on the board has a piece check if it is an enemy piece
-                if(piece != null && piece.getTeamColor() != teamColor){
+                if(piece != null && piece.getTeamColor() != teamColor && canAttackKing(piece, position, kingPosition, board)){
+                    return true;
                     //if that is true check if the end position of the piece moves that it can make are the kings position
-                    Collection<ChessMove> possibleMoves = piece.pieceMoves(board, position);
-                    for(ChessMove move:possibleMoves){
-                        ChessPosition p = move.getEndPosition();
-                        if(p.equals(kingPosition)){
-                            return true;
-                        }
-                    }
+
                 }
             }
         }
         return false;
     }
-
-    private ChessPosition findKing(TeamColor teamColor) {
-        for(int x = 1; x<=8; x++){
-            for(int y = 1; y<=8; y++){
-                ChessPosition position = new ChessPosition(x,y);
-                ChessPiece piece = board.getPiece(position);
-
-                if(piece != null && piece.getTeamColor() == teamColor && piece.getPieceType() == ChessPiece.PieceType.KING){
-                    return position;
-
-                }
-
+    private boolean canAttackKing(ChessPiece piece, ChessPosition position, ChessPosition kingPosition, ChessBoard board){
+        Collection<ChessMove> possibleMoves = piece.pieceMoves(board, position);
+        for(ChessMove move:possibleMoves){
+            ChessPosition p = move.getEndPosition();
+            if(p.equals(kingPosition)){
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
+
     private boolean isCopyInCheck(TeamColor teamColor, ChessBoard board) {
-        ChessPosition kingPosition = findNewKing(teamColor, board);
+        ChessPosition kingPosition = findKing(teamColor, board);
 
         //loop through the board
         return goThroughBoard(teamColor, kingPosition, board);
     }
 
-    private ChessPosition findNewKing(TeamColor teamColor, ChessBoard board) {
+    private ChessPosition findKing(TeamColor teamColor, ChessBoard board) {
         for(int x = 1; x<=8; x++){
             for(int y = 1; y<=8; y++){
                 ChessPosition position = new ChessPosition(x,y);
