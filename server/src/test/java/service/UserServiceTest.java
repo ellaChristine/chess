@@ -1,10 +1,9 @@
 package service;
 
+import exception.BadRequestException;
 import org.junit.jupiter.api.Test;
-import dataaccess.DataAccess;
-import dataaccess.DataAccessException;
+import exception.DataAccessException;
 import dataaccess.MemoryDataAccess;
-import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import service.Request.RegisterRequest;
 import service.Result.RegisterResult;
@@ -19,10 +18,6 @@ class UserServiceTest {
         service = new UserService(new MemoryDataAccess());
     }
 
-//Write the positive test — successful registration. This test should create a RegisterRequest with a valid username
-//password, and email, call register on your service, and then assert that the result is what you expect.
-// Things worth asserting are that the result is not null, that the username in the result matches what you passed in,
-// and that the authToken in the result is not null or empty.
     @Test
     void registerSuccess() throws DataAccessException {
         RegisterRequest request = new RegisterRequest("Ella716", "1234567", "ekinney0@byu.edu");
@@ -39,8 +34,12 @@ class UserServiceTest {
         RegisterRequest request2 = new RegisterRequest("RJSM715", "23456", "ellakinney@gmail.com");
         assertThrows(DataAccessException.class, () -> service.register(request2));
     }
-    @Test
-    void registerBadInput() throws DataAccessException{
 
+    @Test
+    void registerBadInput() throws BadRequestException {
+        RegisterRequest requestNullUser = new RegisterRequest(null, "IlikeChesse!", "ekinney0@gmail.com");
+        assertThrows(BadRequestException.class, () -> service.register(requestNullUser));
+        RegisterRequest requestNullPassword = new RegisterRequest("ekinney", null, "ellakinney716@gmail.com");
+        assertThrows(BadRequestException.class, () -> service.register(requestNullPassword));
     }
 }
