@@ -4,10 +4,11 @@ import dataaccess.DataAccess;
 import exception.BadRequestException;
 import model.*;
 import exception.DataAccessException;
-import service.Request.RegisterRequest;
-import service.Result.RegisterResult;
+import service.Request.*;
+import service.Result.*;
 
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class UserService {
@@ -34,6 +35,27 @@ public class UserService {
         return new RegisterResult(a.username(),a.authToken());
     }
 
+    public LoginResult login(LoginRequest loginrequest) throws DataAccessException {
+        if(loginrequest.username() == null || loginrequest.password() == null){
+            throw new BadRequestException();
+        }
+        UserData user = dataAccess.getUser(loginrequest.username());
+        if(user == null){
+            throw new DataAccessException("Error: Unauthorized");
+        }
+        if(!Objects.equals(user.password(), loginrequest.password())){
+            throw new DataAccessException("Error: unauthorized");
+        }
+        String token = createAuthToken();
+        AuthData result = new AuthData(token, user.username());
+        dataAccess.createAuth(result);
+
+        return new LoginResult(result.username(), result.authToken());
+    }
+
+    public void logout(LogoutRequest logoutrequest) throws DataAccessException{
+
+    }
     private String createAuthToken(){
         return UUID.randomUUID().toString();
     }

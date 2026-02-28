@@ -18,6 +18,7 @@ public class Server {
         UserHandler handler = new UserHandler();
 
         javalin.post("/user", handler::register);
+        javalin.post("/session",handler::login);
         javalin.exception(ResponseException.class, this::exceptionHandler);
     }
     private void exceptionHandler(ResponseException ex, Context ctx) {

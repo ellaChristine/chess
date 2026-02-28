@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import exception.DataAccessException;
 import dataaccess.MemoryDataAccess;
 import org.junit.jupiter.api.BeforeEach;
-import service.Request.RegisterRequest;
-import service.Result.RegisterResult;
+import service.Request.*;
+import service.Result.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,5 +41,40 @@ class UserServiceTest {
         assertThrows(BadRequestException.class, () -> service.register(requestNullUser));
         RegisterRequest requestNullPassword = new RegisterRequest("ekinney", null, "ellakinney716@gmail.com");
         assertThrows(BadRequestException.class, () -> service.register(requestNullPassword));
+        RegisterRequest requestNullEmail = new RegisterRequest("ekinney", "123456", null);
+        assertThrows(BadRequestException.class, () -> service.register(requestNullEmail));
+
     }
+    @Test
+    void loginSuccess() throws DataAccessException {
+        RegisterRequest createUser = new RegisterRequest("EllaCK", "336112#", "rjmiercort@gmail.com");
+        service.register(createUser);
+        LoginRequest request = new LoginRequest("EllaCK", "336112#");
+        LoginResult result = service.login(request);
+        assertNotNull(result);
+        assertEquals("EllaCK", result.username());
+        assertNotNull(result.authToken());
+    }
+    @Test
+    void userDoesNotExist() throws DataAccessException{
+        LoginRequest request = new LoginRequest("EllaCK", "336112#");
+        assertThrows(DataAccessException.class, () ->service.login(request));
+    }
+    @Test
+    void passwordIncorrect() throws DataAccessException{
+        RegisterRequest createUser = new RegisterRequest("EllaCK", "336112#", "rjmiercort@gmail.com");
+        service.register(createUser);
+        LoginRequest request = new LoginRequest("EllaCK", "12345");
+        assertThrows(DataAccessException.class, () -> service.login(request));
+    }
+    @Test
+    void loginBadRequest() throws DataAccessException {
+        RegisterRequest createUser = new RegisterRequest("EllaCK", "336112#", "rjmiercort@gmail.com");
+        service.register(createUser);
+        LoginRequest passwordNull = new LoginRequest("EllaCK", null);
+        assertThrows(BadRequestException.class, () -> service.login(passwordNull));
+        LoginRequest userNull = new LoginRequest(null, "336112#");
+        assertThrows(BadRequestException.class, () -> service.login(userNull));
+    }
+
 }
