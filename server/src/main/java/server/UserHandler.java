@@ -2,26 +2,27 @@ package server;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import dataaccess.DataAccess;
 import exception.BadRequestException;
 import exception.DataAccessException;
 import dataaccess.MemoryDataAccess;
 import exception.ResponseException;
 import io.javalin.http.Context;
-import service.Request.LoginRequest;
-import service.Request.RegisterRequest;
-import service.Result.LoginResult;
-import service.Result.RegisterResult;
+import model.AuthData;
+import service.Request.*;
+import service.Result.*;
 import service.UserService;
 
 import java.util.Map;
 
 public class UserHandler {
     private final UserService service;
+    private final AuthHandler auth;
 
-    public UserHandler() {
-        this.service = new UserService(new MemoryDataAccess());
+    public UserHandler(DataAccess dataAccess) {
+        this.auth = new AuthHandler(dataAccess);
+        this.service = new UserService(dataAccess);
     }
-
     public void register(Context ctx) throws ResponseException {
         try{
             RegisterRequest request= new Gson().fromJson(ctx.body(), RegisterRequest.class);
@@ -46,5 +47,19 @@ public class UserHandler {
         catch (DataAccessException e){
             throw new ResponseException(401, e.getMessage());
         }
+    }
+    public void logout(Context ctx) throws ResponseException{
+           try{
+               AuthData auth = this.auth.validateAuth(ctx);
+               service.logout(new LogoutRequest(auth.authToken()));
+           }
+           catch(DataAccessException e){
+               throw new ResponseException(401, "Error: unauthorized");
+           }
+
+    }
+    public void clear(Context ctx){
+        service.clear();
+        ctx.status(200);
     }
 }

@@ -10,4 +10,7 @@ public interface DataAccess {
     void createAuth(AuthData auth) throws DataAccessException;
     AuthData getAuth(String auth) throws DataAccessException;
     void deleteAuth(AuthData auth) throws DataAccessException;
+    void clearUsers();
+    void clearGames();
+    void clearAuths();
 }

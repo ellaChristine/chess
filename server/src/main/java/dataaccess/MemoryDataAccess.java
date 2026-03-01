@@ -6,7 +6,7 @@ import java.util.HashMap;
 public class MemoryDataAccess implements DataAccess{
     final private HashMap<String, UserData> newUser = new HashMap<>();
     final private HashMap<String, AuthData> authToken = new HashMap<>();
-
+    final private HashMap<String, GameData> game = new HashMap<>();
     public void createUser(UserData user){
         user = new UserData(user.username(),user.password(),user.email());
 
@@ -23,5 +23,16 @@ public class MemoryDataAccess implements DataAccess{
     public AuthData getAuth(String auth){return authToken.get(auth);}
     public void deleteAuth(AuthData auth){
         authToken.remove(auth.authToken());
+    }
+    public void clearUsers(){
+        newUser.clear();
+    }
+
+    public void clearAuths() {
+        authToken.clear();
+    }
+
+    public void clearGames() {
+        game.clear();
     }
 }

@@ -1,6 +1,7 @@
 package service;
 
 import exception.BadRequestException;
+import model.AuthData;
 import org.junit.jupiter.api.Test;
 import exception.DataAccessException;
 import dataaccess.MemoryDataAccess;
@@ -75,6 +76,23 @@ class UserServiceTest {
         assertThrows(BadRequestException.class, () -> service.login(passwordNull));
         LoginRequest userNull = new LoginRequest(null, "336112#");
         assertThrows(BadRequestException.class, () -> service.login(userNull));
+    }
+    @Test
+    void logoutSuccess() throws DataAccessException{
+        RegisterRequest createUser = new RegisterRequest("molecularBiology!", "1234567", "duke.calie.io@gmail.com");
+        service.register(createUser);
+        LoginRequest loginRequest = new LoginRequest("molecularBiology!", "1234567");
+        LoginResult loginResult = service.login(loginRequest);
+        LogoutRequest request = new LogoutRequest(loginResult.authToken());
+        service.logout(request);
+        AuthData auth = new MemoryDataAccess().getAuth(loginResult.authToken());
+        assertNull(auth);
+    }
+    @Test
+    void logoutFail() throws DataAccessException{
+        LogoutRequest logout = new LogoutRequest("fakeToken123");
+        assertThrows(DataAccessException.class, () -> service.logout(logout));
+
     }
 
 }

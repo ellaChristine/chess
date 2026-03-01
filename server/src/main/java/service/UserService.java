@@ -54,9 +54,25 @@ public class UserService {
     }
 
     public void logout(LogoutRequest logoutrequest) throws DataAccessException{
-
+        if (logoutrequest.authToken() == null){
+            throw new BadRequestException();
+        }
+        AuthData a = dataAccess.getAuth(logoutrequest.authToken());
+        if(a == null){
+            throw new DataAccessException("Error: unauthorized");
+        }
+        dataAccess.deleteAuth(a);
+    }
+    public void clear(){
+        dataAccess.clearUsers();
+        dataAccess.clearAuths();
+        dataAccess.clearGames();
     }
     private String createAuthToken(){
         return UUID.randomUUID().toString();
+    }
+
+    public AuthData getAuth (String auth) throws DataAccessException {
+        return dataAccess.getAuth(auth);
     }
 }
