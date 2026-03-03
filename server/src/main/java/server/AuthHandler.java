@@ -1,7 +1,6 @@
 package server;
 
 import dataaccess.DataAccess;
-import dataaccess.MemoryDataAccess;
 import exception.DataAccessException;
 import exception.ResponseException;
 import io.javalin.http.Context;
@@ -18,15 +17,12 @@ public class AuthHandler {
     public AuthData validateAuth(Context ctx) throws ResponseException{
        try{
            String auth = ctx.header("authorization");
-           System.out.println(auth);
            AuthData data = this.service.getAuth(auth);
            if(data == null){
-               System.out.println("hellow! from inside the if statement");
                throw new ResponseException(401, "Error: unauthorized");
            }
            return data;
        } catch (DataAccessException e) {
-           System.out.println(e);
            throw new ResponseException(401, "Error: unauthorized");
        }
     }

@@ -1,14 +1,10 @@
 package server;
 
-import com.google.gson.Gson;
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
 import exception.ResponseException;
 import io.javalin.*;
 import io.javalin.http.Context;
-import io.javalin.http.HttpResponseException;
-import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 
 public class Server {
 
@@ -26,6 +22,7 @@ public class Server {
         javalin.post("/session",handler::login);
         javalin.delete("/session", handler::logout);
         javalin.delete("/db", handler::clear);
+        javalin.post("/game", handler::createGame);
         javalin.exception(ResponseException.class, this::exceptionHandler);
     }
     private void exceptionHandler(ResponseException ex, Context ctx) {

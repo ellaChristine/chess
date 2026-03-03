@@ -5,15 +5,12 @@ import com.google.gson.JsonSyntaxException;
 import dataaccess.DataAccess;
 import exception.BadRequestException;
 import exception.DataAccessException;
-import dataaccess.MemoryDataAccess;
 import exception.ResponseException;
 import io.javalin.http.Context;
 import model.AuthData;
 import service.Request.*;
 import service.Result.*;
 import service.UserService;
-
-import java.util.Map;
 
 public class UserHandler {
     private final UserService service;
@@ -57,6 +54,20 @@ public class UserHandler {
                throw new ResponseException(401, "Error: unauthorized");
            }
 
+    }
+    public void createGame(Context ctx) throws ResponseException{
+        try{
+            AuthData auth = this.auth.validateAuth(ctx);
+            CreateGameRequest request = new Gson().fromJson(ctx.body(), CreateGameRequest.class);
+            CreateGameResult result = service.createGame(auth.authToken(),request);
+            ctx.result(new Gson().toJson(result));
+        }
+        catch (BadRequestException | JsonSyntaxException e){
+            throw new ResponseException(400, "Error: bad request");
+        }
+        catch (DataAccessException e){
+            throw new ResponseException(401, "Error: unauthorized");
+        }
     }
     public void clear(Context ctx){
         service.clear();

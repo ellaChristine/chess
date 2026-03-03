@@ -1,13 +1,12 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.DataAccess;
 import exception.BadRequestException;
 import model.*;
 import exception.DataAccessException;
 import service.Request.*;
 import service.Result.*;
-
-
 import java.util.Objects;
 import java.util.UUID;
 
@@ -68,6 +67,31 @@ public class UserService {
         dataAccess.clearAuths();
         dataAccess.clearGames();
     }
+
+//    create a new GameData object, call dataAccess.createGame, and return the gameID.
+    public CreateGameResult createGame(String authToken, CreateGameRequest createGameRequest) throws DataAccessException {
+        AuthData a = dataAccess.getAuth(authToken);
+        if(a == null){
+            throw new DataAccessException("Error: unauthorized");
+        }
+        if(createGameRequest.gameName() == null){
+            throw new BadRequestException();
+        }
+        GameData g = new GameData(0, null, null,createGameRequest.gameName(),new ChessGame());
+        Integer ID = dataAccess.createGame(g).gameID();
+        return new CreateGameResult(ID);
+    }
+//    public Collection<GameData> listGames(ListGamesRequest listGamesRequest) throws DataAccessException{
+//        if(listGamesRequest.authToken() == null){
+//            throw new BadRequestException();
+//        }
+//        AuthData a = dataAccess.getAuth(listGamesRequest.authToken());
+//        if(a == null){
+//            throw new DataAccessException("Error: unauthorized");
+//        }
+//        dataAccess.listGames();
+//
+//    }
     private String createAuthToken(){
         return UUID.randomUUID().toString();
     }
