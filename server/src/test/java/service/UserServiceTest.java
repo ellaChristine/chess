@@ -168,8 +168,7 @@ class UserServiceTest {
         LoginResult firstUser = loginUser();
         CreateGameResult game = createGame(firstUser);
         JoinGameRequest joinWhite = new JoinGameRequest("White", game.gameID());
-        service.joinGame(firstUser.authToken(), joinWhite);
-        assertThrows(BadRequestException.class, () -> service.joinGame(firstUser.authToken(), joinWhite));
+        assertThrows(DataAccessException.class, () -> service.joinGame("qwerrtyuoipb", joinWhite));
     }
 
     private LoginResult loginUser() throws DataAccessException {
