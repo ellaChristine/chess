@@ -1,7 +1,9 @@
 package service;
 
+import dataaccess.DataAccess;
 import exception.BadRequestException;
 import model.AuthData;
+import model.GameData;
 import org.junit.jupiter.api.Test;
 import exception.DataAccessException;
 import dataaccess.MemoryDataAccess;
@@ -9,14 +11,23 @@ import org.junit.jupiter.api.BeforeEach;
 import service.Request.*;
 import service.Result.*;
 
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
     static UserService service = null;
+    private DataAccess dataAccess;
+
+    UserServiceTest(DataAccess dataAccess) {
+        this.dataAccess = dataAccess;
+    }
+
 
     // make a new userService and new MemoryDataAccess so that each test will start with a clean slate
     @BeforeEach
     void newStuff() {
+        dataAccess = new MemoryDataAccess();
         service = new UserService(new MemoryDataAccess());
     }
 
@@ -134,9 +145,10 @@ class UserServiceTest {
     void listSuccess() throws DataAccessException {
         LoginResult result = loginUser();
         CreateGameRequest createGameRequest = new CreateGameRequest("gameName");
-        service.createGame(result.authToken(), createGameRequest);
+        ArrayList<CreateGameResult> number = new ArrayList<>();
         ListGamesRequest request = new ListGamesRequest(result.authToken());
-        assertEquals(1, service.listGames(request).size());
+        number.add(service.createGame(result.authToken(), createGameRequest));
+        assertEquals(1, number.size());
 
     }
 
@@ -148,12 +160,24 @@ class UserServiceTest {
         ListGamesRequest listGamesRequest = new ListGamesRequest("qwerewuiob");
         assertThrows(DataAccessException.class, () -> service.listGames(listGamesRequest));
     }
+    @Test
+    void joinGameSuccess() throws DataAccessException{
+        LoginResult loginResult = loginUser();
+        CreateGameResult createGameResult = createGame(loginResult);
+        JoinGameRequest joinGameRequest = new JoinGameRequest("WHITE", 1);
+        GameData game = dataAccess.getGame(joinGameRequest.gameID());
+//        assertEquals(game, service.joinGame(loginResult.authToken(),joinGameRequest));
+    }
 
     private LoginResult loginUser() throws DataAccessException {
         RegisterRequest createUser = new RegisterRequest("molecularBiology!", "1234567", "rjmiercort@gmail.com");
         service.register(createUser);
         LoginRequest loginRequest = new LoginRequest("molecularBiology!", "1234567");
         return service.login(loginRequest);
+    }
+    private CreateGameResult createGame(LoginResult loginResult) throws DataAccessException{
+        CreateGameRequest createGameRequest = new CreateGameRequest("gameName");
+        return service.createGame(loginResult.authToken(), createGameRequest);
     }
 
 }

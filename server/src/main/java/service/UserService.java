@@ -71,7 +71,6 @@ public class UserService {
         dataAccess.clearGames();
     }
 
-//    create a new GameData object, call dataAccess.createGame, and return the gameID.
     public CreateGameResult createGame(String authToken, CreateGameRequest createGameRequest) throws DataAccessException {
         AuthData a = dataAccess.getAuth(authToken);
         if(a == null){
@@ -84,7 +83,8 @@ public class UserService {
         Integer ID = dataAccess.createGame(g).gameID();
         return new CreateGameResult(ID);
     }
-    public Collection<ListGamesData> listGames(ListGamesRequest listGamesRequest) throws DataAccessException{
+
+    public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws DataAccessException{
         if(listGamesRequest.authToken() == null){
             throw new BadRequestException();
         }
@@ -92,7 +92,39 @@ public class UserService {
         if(a == null){
             throw new DataAccessException("Error: unauthorized");
         }
-        return dataAccess.listGames();
+        Collection<ListGamesData> games = dataAccess.listGames();
+        return new ListGamesResult(games);
+
+    }
+
+    public void joinGame(String authToken, JoinGameRequest joinGameRequest)throws DataAccessException{
+        AuthData a = dataAccess.getAuth(authToken);
+        if(a == null){
+            throw new DataAccessException("Error: unauthorized");
+        }
+
+        if(joinGameRequest.playerColor() == null || joinGameRequest.gameID() == null) {
+            throw new BadRequestException();
+
+        }
+        GameData game = dataAccess.getGame(joinGameRequest.gameID());
+        if(Objects.equals(joinGameRequest.playerColor(), "WHITE")){
+            if(game.whiteUsername() != null){
+                throw new DataAccessException("Error: already taken");
+            }
+            GameData gameData = new GameData(game.gameID(), a.username(),game.blackUsername(), game.gameName(), game.game());
+            dataAccess.updateGame(gameData);
+        }
+        if(joinGameRequest.playerColor().equals("BLACK")){
+            if(game.blackUsername() != null){
+                throw new DataAccessException("Error: already taken");
+            }
+            GameData gameData = new GameData(game.gameID(), game.whiteUsername(), a.username(), game.gameName(), game.game());
+            dataAccess.updateGame(gameData);
+        }
+        if(!joinGameRequest.playerColor().equals("WHITE") && !joinGameRequest.playerColor().equals("BLACK")){
+            throw new BadRequestException();
+        }
 
     }
     private String createAuthToken(){

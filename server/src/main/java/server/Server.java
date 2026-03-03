@@ -24,6 +24,7 @@ public class Server {
         javalin.delete("/db", handler::clear);
         javalin.post("/game", handler::createGame);
         javalin.get("/game", handler::listGames);
+        javalin.put("/game", handler::joinGame);
         javalin.exception(ResponseException.class, this::exceptionHandler);
     }
     private void exceptionHandler(ResponseException ex, Context ctx) {

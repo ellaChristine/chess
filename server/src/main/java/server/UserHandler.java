@@ -69,6 +69,7 @@ public class UserHandler {
             throw new ResponseException(401, "Error: unauthorized");
         }
     }
+
     public void listGames(Context ctx) throws ResponseException{
         try{
             AuthData auth = this.auth.validateAuth(ctx);
@@ -78,6 +79,25 @@ public class UserHandler {
         catch (DataAccessException e) {
             throw new ResponseException(401, "Error: unauthorized");
         }
+    }
+
+    public void joinGame(Context ctx) throws ResponseException{
+        try{
+            AuthData auth = this.auth.validateAuth(ctx);
+            JoinGameRequest joinGameRequest = new Gson().fromJson(ctx.body(),JoinGameRequest.class);
+            service.joinGame(auth.authToken(), joinGameRequest);
+            ctx.result("{}");
+        }
+        catch (BadRequestException | JsonSyntaxException e){
+            throw new ResponseException(400, "Error: bad request");
+        }
+        catch (DataAccessException e){
+            throw new ResponseException(403, "Error: already taken");
+        }
+
+
+
+
     }
     public void clear(Context ctx){
         service.clear();
