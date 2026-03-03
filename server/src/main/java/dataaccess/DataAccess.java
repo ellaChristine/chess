@@ -4,7 +4,7 @@ import exception.DataAccessException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import service.Result.ListGamesData;
+import service.result.ListGamesData;
 
 import java.util.Collection;
 

@@ -8,8 +8,8 @@ import exception.DataAccessException;
 import exception.ResponseException;
 import io.javalin.http.Context;
 import model.AuthData;
-import service.Request.*;
-import service.Result.*;
+import service.request.*;
+import service.result.*;
 import service.UserService;
 
 public class UserHandler {

@@ -5,8 +5,8 @@ import dataaccess.DataAccess;
 import exception.BadRequestException;
 import model.*;
 import exception.DataAccessException;
-import service.Request.*;
-import service.Result.*;
+import service.request.*;
+import service.result.*;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -80,8 +80,8 @@ public class UserService {
             throw new BadRequestException();
         }
         GameData g = new GameData(0, null, null,createGameRequest.gameName(),new ChessGame());
-        Integer ID = dataAccess.createGame(g).gameID();
-        return new CreateGameResult(ID);
+        Integer iD = dataAccess.createGame(g).gameID();
+        return new CreateGameResult(iD);
     }
 
     public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws DataAccessException{

@@ -8,10 +8,8 @@ import org.junit.jupiter.api.Test;
 import exception.DataAccessException;
 import dataaccess.MemoryDataAccess;
 import org.junit.jupiter.api.BeforeEach;
-import service.Request.*;
-import service.Result.*;
-
-import java.util.ArrayList;
+import service.request.*;
+import service.result.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 

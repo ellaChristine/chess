@@ -2,12 +2,11 @@ package dataaccess;
 
 import exception.DataAccessException;
 import model.*;
-import service.Result.ListGamesData;
+import service.result.ListGamesData;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 public class MemoryDataAccess implements DataAccess{
     final private HashMap<String, UserData> newUser = new HashMap<>();
