@@ -13,9 +13,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
     static UserService service = null;
-// make a new userService and new MemoryDataAccess so that each test will start with a clean slate
+
+    // make a new userService and new MemoryDataAccess so that each test will start with a clean slate
     @BeforeEach
-    void newStuff(){
+    void newStuff() {
         service = new UserService(new MemoryDataAccess());
     }
 
@@ -28,27 +29,34 @@ class UserServiceTest {
         assertNotNull(result.authToken());
 
     }
+
     @Test
     void registerDuplicateUsername() throws DataAccessException {
-        RegisterRequest request1 = new RegisterRequest("RJSM715", "123456", "rjmiercort@gmail.com");
+        RegisterRequest request1 = new RegisterRequest("RJSM715", "123456",
+                                "rjmiercort@gmail.com");
         service.register(request1);
-        RegisterRequest request2 = new RegisterRequest("RJSM715", "23456", "ellakinney@gmail.com");
+        RegisterRequest request2 = new RegisterRequest("RJSM715", "23456",
+                                "ellakinney@gmail.com");
         assertThrows(DataAccessException.class, () -> service.register(request2));
     }
 
     @Test
     void registerBadInput() throws BadRequestException {
-        RegisterRequest requestNullUser = new RegisterRequest(null, "IlikeChesse!", "ekinney0@gmail.com");
+        RegisterRequest requestNullUser = new RegisterRequest(null, "IlikeChesse!",
+                                    "ekinney0@gmail.com");
         assertThrows(BadRequestException.class, () -> service.register(requestNullUser));
-        RegisterRequest requestNullPassword = new RegisterRequest("ekinney", null, "ellakinney716@gmail.com");
+        RegisterRequest requestNullPassword = new RegisterRequest("ekinney", null,
+                                        "ellakinney716@gmail.com");
         assertThrows(BadRequestException.class, () -> service.register(requestNullPassword));
         RegisterRequest requestNullEmail = new RegisterRequest("ekinney", "123456", null);
         assertThrows(BadRequestException.class, () -> service.register(requestNullEmail));
 
     }
+
     @Test
     void loginSuccess() throws DataAccessException {
-        RegisterRequest createUser = new RegisterRequest("EllaCK", "336112#", "rjmiercort@gmail.com");
+        RegisterRequest createUser = new RegisterRequest("EllaCK", "336112#",
+                                "rjmiercort@gmail.com");
         service.register(createUser);
         LoginRequest request = new LoginRequest("EllaCK", "336112#");
         LoginResult result = service.login(request);
@@ -56,68 +64,91 @@ class UserServiceTest {
         assertEquals("EllaCK", result.username());
         assertNotNull(result.authToken());
     }
+
     @Test
-    void userDoesNotExist(){
+    void userDoesNotExist() {
         LoginRequest request = new LoginRequest("EllaCK", "336112#");
-        assertThrows(DataAccessException.class, () ->service.login(request));
+        assertThrows(DataAccessException.class, () -> service.login(request));
     }
+
     @Test
-    void passwordIncorrect() throws DataAccessException{
-        RegisterRequest createUser = new RegisterRequest("EllaCK", "336112#", "rjmiercort@gmail.com");
+    void passwordIncorrect() throws DataAccessException {
+        RegisterRequest createUser = new RegisterRequest("EllaCK", "336112#",
+                                "rjmiercort@gmail.com");
         service.register(createUser);
         LoginRequest request = new LoginRequest("EllaCK", "12345");
         assertThrows(DataAccessException.class, () -> service.login(request));
     }
+
     @Test
     void loginBadRequest() throws DataAccessException {
-        RegisterRequest createUser = new RegisterRequest("EllaCK", "336112#", "rjmiercort@gmail.com");
+        RegisterRequest createUser = new RegisterRequest("EllaCK", "336112#",
+                                "rjmiercort@gmail.com");
         service.register(createUser);
         LoginRequest passwordNull = new LoginRequest("EllaCK", null);
         assertThrows(BadRequestException.class, () -> service.login(passwordNull));
         LoginRequest userNull = new LoginRequest(null, "336112#");
         assertThrows(BadRequestException.class, () -> service.login(userNull));
     }
+
     @Test
-    void logoutSuccess() throws DataAccessException{
+    void logoutSuccess() throws DataAccessException {
         LoginResult loginResult = loginUser();
         LogoutRequest request = new LogoutRequest(loginResult.authToken());
         service.logout(request);
         AuthData auth = new MemoryDataAccess().getAuth(loginResult.authToken());
         assertNull(auth);
     }
+
     @Test
-    void logoutFail(){
+    void logoutFail() {
         LogoutRequest logout = new LogoutRequest("fakeToken123");
         assertThrows(DataAccessException.class, () -> service.logout(logout));
 
     }
+
     @Test
-    void createGameSuccess() throws DataAccessException{
+    void createGameSuccess() throws DataAccessException {
         LoginResult loginResult = loginUser();
         CreateGameRequest request = new CreateGameRequest("gameName");
-        CreateGameResult result =service.createGame(loginResult.authToken(), request);
+        CreateGameResult result = service.createGame(loginResult.authToken(), request);
         assertEquals(1, result.gameID());
     }
+
     @Test
-    void badAuthToken(){
+    void badAuthToken() {
         CreateGameRequest request = new CreateGameRequest("name");
         assertThrows(DataAccessException.class, () -> service.createGame("qwertyuiop12345", request));
 
     }
+
     @Test
-    void nullName() throws DataAccessException{
+    void nullName() throws DataAccessException {
         LoginResult result = loginUser();
         CreateGameRequest request = new CreateGameRequest(null);
 
-        assertThrows(BadRequestException.class, () -> service.createGame(result.authToken(),request));
+        assertThrows(BadRequestException.class, () -> service.createGame(result.authToken(), request));
     }
-//    @Test
-//    void listSuccess() throws DataAccessException{
-//        LoginResult result = loginUser();
-//        ListGamesRequest request = new ListGamesRequest(result.authToken());
-//        service.listGames(request);
-//        assert
-//    }
+
+    @Test
+    void listSuccess() throws DataAccessException {
+        LoginResult result = loginUser();
+        CreateGameRequest createGameRequest = new CreateGameRequest("gameName");
+        service.createGame(result.authToken(), createGameRequest);
+        ListGamesRequest request = new ListGamesRequest(result.authToken());
+        assertEquals(1, service.listGames(request).size());
+
+    }
+
+    @Test
+    void listFail() throws DataAccessException {
+        LoginResult result = loginUser();
+        CreateGameRequest createGameRequest = new CreateGameRequest("gameName");
+        service.createGame(result.authToken(), createGameRequest);
+        ListGamesRequest listGamesRequest = new ListGamesRequest("qwerewuiob");
+        assertThrows(DataAccessException.class, () -> service.listGames(listGamesRequest));
+    }
+
     private LoginResult loginUser() throws DataAccessException {
         RegisterRequest createUser = new RegisterRequest("molecularBiology!", "1234567", "rjmiercort@gmail.com");
         service.register(createUser);

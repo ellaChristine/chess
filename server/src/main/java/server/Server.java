@@ -23,6 +23,7 @@ public class Server {
         javalin.delete("/session", handler::logout);
         javalin.delete("/db", handler::clear);
         javalin.post("/game", handler::createGame);
+        javalin.get("/game", handler::listGames);
         javalin.exception(ResponseException.class, this::exceptionHandler);
     }
     private void exceptionHandler(ResponseException ex, Context ctx) {

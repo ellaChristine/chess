@@ -69,6 +69,16 @@ public class UserHandler {
             throw new ResponseException(401, "Error: unauthorized");
         }
     }
+    public void listGames(Context ctx) throws ResponseException{
+        try{
+            AuthData auth = this.auth.validateAuth(ctx);
+            ctx.result(new Gson().toJson(service.listGames(new ListGamesRequest(auth.authToken()))));
+
+        }
+        catch (DataAccessException e) {
+            throw new ResponseException(401, "Error: unauthorized");
+        }
+    }
     public void clear(Context ctx){
         service.clear();
         ctx.status(200);

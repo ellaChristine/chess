@@ -4,6 +4,9 @@ import exception.DataAccessException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import service.Result.ListGamesData;
+
+import java.util.Collection;
 
 public interface DataAccess {
     void createUser(UserData user) throws DataAccessException;
@@ -14,7 +17,8 @@ public interface DataAccess {
     void clearUsers();
     void clearGames();
     void clearAuths();
-//    Collection<GameData> listGames() throws DataAccessException;
+    Collection<ListGamesData> listGames() throws DataAccessException;
     GameData createGame(GameData gameData) throws DataAccessException;
     GameData getGame(Integer gameID) throws DataAccessException;
+    void updateGame(GameData gameData) throws DataAccessException;
 }

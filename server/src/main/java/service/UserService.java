@@ -7,6 +7,8 @@ import model.*;
 import exception.DataAccessException;
 import service.Request.*;
 import service.Result.*;
+
+import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -62,6 +64,7 @@ public class UserService {
         }
         dataAccess.deleteAuth(a);
     }
+
     public void clear(){
         dataAccess.clearUsers();
         dataAccess.clearAuths();
@@ -81,17 +84,17 @@ public class UserService {
         Integer ID = dataAccess.createGame(g).gameID();
         return new CreateGameResult(ID);
     }
-//    public Collection<GameData> listGames(ListGamesRequest listGamesRequest) throws DataAccessException{
-//        if(listGamesRequest.authToken() == null){
-//            throw new BadRequestException();
-//        }
-//        AuthData a = dataAccess.getAuth(listGamesRequest.authToken());
-//        if(a == null){
-//            throw new DataAccessException("Error: unauthorized");
-//        }
-//        dataAccess.listGames();
-//
-//    }
+    public Collection<ListGamesData> listGames(ListGamesRequest listGamesRequest) throws DataAccessException{
+        if(listGamesRequest.authToken() == null){
+            throw new BadRequestException();
+        }
+        AuthData a = dataAccess.getAuth(listGamesRequest.authToken());
+        if(a == null){
+            throw new DataAccessException("Error: unauthorized");
+        }
+        return dataAccess.listGames();
+
+    }
     private String createAuthToken(){
         return UUID.randomUUID().toString();
     }

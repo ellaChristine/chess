@@ -1,8 +1,13 @@
 package dataaccess;
 
+import exception.DataAccessException;
 import model.*;
+import service.Result.ListGamesData;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 public class MemoryDataAccess implements DataAccess{
     final private HashMap<String, UserData> newUser = new HashMap<>();
@@ -38,10 +43,19 @@ public class MemoryDataAccess implements DataAccess{
         return game.get(gameID);
     }
 
+    public void updateGame(GameData gameData) throws DataAccessException {
+        game.put(gameData.gameID(), gameData);
+    }
 
-//    public Collection<GameData> listGames() throws DataAccessException {
-//        return game.values();
-//    }
+
+    public Collection<ListGamesData> listGames(){
+        Collection<GameData> data = game.values();
+        Collection<ListGamesData> newData = new ArrayList<>();
+        for(GameData i: data){
+            newData.add(new ListGamesData(i.gameID(),i.whiteUsername(),i.blackUsername(),i.gameName()));
+        }
+        return newData;
+    }
 
     public void clearGames() {
         game.clear();
