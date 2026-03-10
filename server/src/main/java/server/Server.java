@@ -2,6 +2,8 @@ package server;
 
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
+import dataaccess.MySqlDataAccess;
+import exception.DataAccessException;
 import exception.ResponseException;
 import io.javalin.*;
 import io.javalin.http.Context;
@@ -14,7 +16,11 @@ public class Server {
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
-        this.dataAccess = new MemoryDataAccess();
+        try {
+            this.dataAccess = new MySqlDataAccess();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
         UserHandler handler = new UserHandler(dataAccess);
 
 

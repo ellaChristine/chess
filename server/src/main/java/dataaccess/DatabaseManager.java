@@ -51,6 +51,7 @@ public class DatabaseManager {
         }
     }
 
+    //hello_world
     private static void loadPropertiesFromResources() {
         try (var propStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("db.properties")) {
             if (propStream == null) {
