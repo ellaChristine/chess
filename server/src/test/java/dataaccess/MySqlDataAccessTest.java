@@ -123,14 +123,35 @@ class MySqlDataAccessTest {
     }
 
     @Test
-    void createGame() {
+    void createGameSuccess() throws DataAccessException {
+        GameData game = new GameData(1,"a","b","c",new ChessGame());
+        dataAccess.createGame(game);
+        assertEquals(game, dataAccess.getGame(game.gameID()));
     }
 
     @Test
-    void getGame() {
+    void createGameFail() throws DataAccessException{
+        ChessGame chessGame = new ChessGame();
+        GameData game = new GameData(1,"me", "you","yay", chessGame);
+        dataAccess.createGame(game);
+        GameData game2 = new GameData(1,"me", "you",null, chessGame);
+        assertThrows(DataAccessException.class, () -> dataAccess.createGame(game2));
+    }
+
+    @Test
+    void getGameSuccess() throws DataAccessException {
+        GameData game = new GameData(1,"me", "you","yay", new ChessGame());
+        dataAccess.createGame(game);
+        assertNotNull(dataAccess.getGame(game.gameID()));
+    }
+
+    @Test
+    void getGameFail() throws DataAccessException{
+        assertNull(dataAccess.getGame(1));
     }
 
     @Test
     void updateGame() {
+
     }
 }
