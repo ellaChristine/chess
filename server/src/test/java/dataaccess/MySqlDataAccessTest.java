@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import exception.*;
@@ -78,19 +79,43 @@ class MySqlDataAccessTest {
     }
 
     @Test
-    void deleteAuth() {
+    void deleteAuthSuccess() throws DataAccessException {
+        AuthData auth = new AuthData("a", "b");
+        dataAccess.createAuth(auth);
+        dataAccess.deleteAuth(auth);
+        assertNull(dataAccess.getAuth(auth.authToken()));
     }
 
     @Test
-    void clearUsers() {
+    void deleteAuthFail() throws DataAccessException{
+        AuthData auth = new AuthData("a", "b");
+        dataAccess.deleteAuth(auth);
+        assertNull(dataAccess.getAuth(auth.authToken()));
     }
 
     @Test
-    void clearGames() {
+    void clearUsers() throws DataAccessException {
+        UserData user = new UserData("a", "b","c");
+        dataAccess.createUser(user);
+        dataAccess.clearUsers();
+        assertNull(dataAccess.getUser(user.username()));
+
     }
 
     @Test
-    void clearAuths() {
+    void clearGames() throws DataAccessException {
+        GameData game = new GameData(1,"a","b","c",new ChessGame());
+        dataAccess.createGame(game);
+        dataAccess.clearGames();
+        assertNull(dataAccess.getGame(game.gameID()));
+    }
+
+    @Test
+    void clearAuths() throws DataAccessException {
+        AuthData auth = new AuthData("a","b");
+        dataAccess.createAuth(auth);
+        dataAccess.clearAuths();
+        assertNull(dataAccess.getAuth(auth.authToken()));
     }
 
     @Test
