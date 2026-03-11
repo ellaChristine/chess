@@ -78,17 +78,34 @@ public class MySqlDataAccess implements DataAccess {
 
 
     public void clearUsers() {
-
+        var statement = "TRUNCATE user";
+        try {
+            executeUpdate(statement);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
     public void clearGames() {
-
+        var statement = "TRUNCATE game";
+        try{
+            executeUpdate(statement);
+        }
+        catch (DataAccessException e){
+            throw new RuntimeException();
+        }
     }
 
 
     public void clearAuths() {
-
+        var statement = "TRUNCATE authToken";
+        try{
+            executeUpdate(statement);
+        }
+        catch (DataAccessException e){
+            throw new RuntimeException();
+        }
     }
 
 
