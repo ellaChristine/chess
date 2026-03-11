@@ -163,7 +163,12 @@ class MySqlDataAccessTest {
     }
 
     @Test
-    void updateGame() {
-
+    void updateGameSuccess() throws DataAccessException {
+        GameData game = new GameData(1,null,"josh","nope", new ChessGame());
+        dataAccess.createGame(game);
+        GameData updatedGame = new GameData(game.gameID(),"ella", game.blackUsername(),game.gameName(),game.game());
+        dataAccess.updateGame(updatedGame);
+        assertEquals(updatedGame, dataAccess.getGame(game.gameID()));
     }
+
 }
