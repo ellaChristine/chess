@@ -5,6 +5,7 @@ import dataaccess.DataAccess;
 import exception.BadRequestException;
 import model.*;
 import exception.DataAccessException;
+import org.mindrot.jbcrypt.BCrypt;
 import service.request.*;
 import service.result.*;
 
@@ -44,7 +45,7 @@ public class UserService {
         if(user == null){
             throw new DataAccessException("Error: Unauthorized");
         }
-        if(!Objects.equals(user.password(), loginrequest.password())){
+        if(BCrypt.checkpw(loginrequest.password(),user.password())){
             throw new DataAccessException("Error: unauthorized");
         }
         String token = createAuthToken();
