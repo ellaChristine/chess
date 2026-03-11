@@ -50,7 +50,18 @@ class MySqlDataAccessTest {
     }
 
     @Test
-    void createAuth() {
+    void createAuthSuccess() throws DataAccessException {
+        AuthData auth = new AuthData("12erkjion", "a");
+        dataAccess.createAuth(auth);
+        assertNotNull(dataAccess.getAuth(auth.authToken()));
+    }
+
+    @Test
+    void createAuthFail() throws DataAccessException{
+        AuthData auth = new AuthData("1234eerjioh", "a");
+        dataAccess.createAuth(auth);
+        AuthData auth2 = new AuthData("1234eerjioh", "a");
+        assertThrows(DataAccessException.class, ()-> dataAccess.createAuth(auth2));
     }
 
     @Test
