@@ -7,7 +7,10 @@ import exception.*;
 import dataaccess.*;
 import model.*;
 import service.UserService;
+import service.result.ListGamesData;
 
+
+import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -119,7 +122,16 @@ class MySqlDataAccessTest {
     }
 
     @Test
-    void listGames() {
+    void listGamesSuccess() throws DataAccessException {
+        GameData game1 = new GameData(1,"ella", "josh", "love", new ChessGame());
+        dataAccess.createGame(game1);
+        Collection<ListGamesData> list = dataAccess.listGames();
+        assertEquals(1,list.size());
+    }
+
+    @Test
+    void listGamesFail() throws DataAccessException{
+        assertEquals(0,dataAccess.listGames().size());
     }
 
     @Test
