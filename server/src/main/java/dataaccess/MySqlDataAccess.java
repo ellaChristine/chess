@@ -3,6 +3,7 @@ package dataaccess;
 import com.google.gson.Gson;
 import exception.*;
 import model.*;
+import org.mindrot.jbcrypt.BCrypt;
 import service.result.ListGamesData;
 
 import java.sql.*;
@@ -18,64 +19,132 @@ public class MySqlDataAccess implements DataAccess {
         configureDatabase();
     }
 
-    @Override
+
     public void createUser(UserData user) throws DataAccessException {
-
+        String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+        var statement = "INSERT INTO user(username, password, email) VALUES (?, ?, ?)";
+        executeUpdate(statement, user.username(),hashedPassword,user.email());
     }
 
-    @Override
+
     public UserData getUser(String username) throws DataAccessException {
+        try(Connection conn = DatabaseManager.getConnection()){
+            var statement = "SELECT * FROM user WHERE username=?";
+            try(PreparedStatement ps = conn.prepareStatement(statement)){
+                ps.setString(1, username);
+                try(ResultSet rs = ps.executeQuery()){
+                    if(rs.next()){
+                        return readUser(rs);
+                    }
+                }
+            }
+        }
+        catch (Exception e){
+            throw new DataAccessException("Error", e);
+        }
         return null;
     }
 
-    @Override
+
     public void createAuth(AuthData auth) throws DataAccessException {
-
+        var statement = "INSERT INTO authToken(authToken, username) VALUES(?,?)";
+        executeUpdate(statement, auth.authToken(), auth.username());
     }
 
-    @Override
+
     public AuthData getAuth(String auth) throws DataAccessException {
+        try(Connection conn = DatabaseManager.getConnection()){
+            var statement = "SELECT * FROM authToken WHERE authToken=?";
+            try(PreparedStatement ps = conn.prepareStatement(statement)){
+                ps.setString(1,auth);
+                try(ResultSet rs = ps.executeQuery()){
+                    if(rs.next()){
+                        return readAuth(rs);
+                    }
+                }
+            }
+        }
+        catch (Exception e){
+            throw new DataAccessException("Error", e);
+        }
         return null;
     }
 
-    @Override
-    public void deleteAuth(AuthData auth) throws DataAccessException {
 
+    public void deleteAuth(AuthData auth) throws DataAccessException {
+        var statement = "DELETE FROM authToken WHERE auth=?";
+        executeUpdate(statement);
     }
 
-    @Override
+
     public void clearUsers() {
 
     }
 
-    @Override
+
     public void clearGames() {
 
     }
 
-    @Override
+
     public void clearAuths() {
 
     }
 
-    @Override
+
     public Collection<ListGamesData> listGames() throws DataAccessException {
         return List.of();
     }
 
-    @Override
+
     public GameData createGame(GameData gameData) throws DataAccessException {
         return null;
     }
 
-    @Override
+
     public GameData getGame(Integer gameID) throws DataAccessException {
         return null;
     }
 
-    @Override
+
     public void updateGame(GameData gameData) throws DataAccessException {
 
+    }
+
+    private UserData readUser(ResultSet rs) throws SQLException{
+        var username = rs.getString("username");
+        var password = rs.getString("password");
+        var email = rs.getString("email");
+        return new UserData(username,password,email);
+    }
+
+    private AuthData readAuth(ResultSet rs) throws SQLException{
+        var authToken = rs.getString("authToken");
+        var username = rs.getString("username");
+        return new AuthData(authToken,username);
+    }
+
+    private int executeUpdate(String statement, Object... params) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                for (int i = 0; i < params.length; i++) {
+                    Object param = params[i];
+                    if (param instanceof String p) ps.setString(i + 1, p);
+                    else if (param instanceof Integer p) ps.setInt(i + 1, p);
+                    else if (param == null) ps.setNull(i + 1, NULL);
+                }
+                ps.executeUpdate();
+
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+
+                return 0;
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("unable to update database", e);
+        }
     }
     private  final String[] createTables = new String[]{
                 """
