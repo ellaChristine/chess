@@ -45,7 +45,7 @@ public class UserService {
         if(user == null){
             throw new DataAccessException("Error: Unauthorized");
         }
-        if(BCrypt.checkpw(loginrequest.password(),user.password())){
+        if(!BCrypt.checkpw(loginrequest.password(),user.password())){
             throw new DataAccessException("Error: unauthorized");
         }
         String token = createAuthToken();
