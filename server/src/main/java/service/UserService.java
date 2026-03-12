@@ -2,7 +2,7 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.DataAccess;
-import exception.BadRequestException;
+import exception.*;
 import model.*;
 import exception.DataAccessException;
 import org.mindrot.jbcrypt.BCrypt;
@@ -26,7 +26,7 @@ public class UserService {
         }
         boolean b = dataAccess.getUser(registerRequest.username()) != null;
         if(b){
-            throw new DataAccessException("Error: already taken");
+            throw new AlreadyTakenException();
         }
         UserData n = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
         dataAccess.createUser(n);
@@ -43,10 +43,10 @@ public class UserService {
         }
         UserData user = dataAccess.getUser(loginrequest.username());
         if(user == null){
-            throw new DataAccessException("Error: Unauthorized");
+            throw new UnauthorizedException();
         }
         if(!BCrypt.checkpw(loginrequest.password(),user.password())){
-            throw new DataAccessException("Error: unauthorized");
+            throw new UnauthorizedException();
         }
         String token = createAuthToken();
         AuthData result = new AuthData(token, user.username());
@@ -61,7 +61,7 @@ public class UserService {
         }
         AuthData a = dataAccess.getAuth(logoutrequest.authToken());
         if(a == null){
-            throw new DataAccessException("Error: unauthorized");
+            throw new UnauthorizedException();
         }
         dataAccess.deleteAuth(a);
     }
@@ -75,7 +75,7 @@ public class UserService {
     public CreateGameResult createGame(String authToken, CreateGameRequest createGameRequest) throws DataAccessException {
         AuthData a = dataAccess.getAuth(authToken);
         if(a == null){
-            throw new DataAccessException("Error: unauthorized");
+            throw new UnauthorizedException();
         }
         if(createGameRequest.gameName() == null){
             throw new BadRequestException();
@@ -91,7 +91,7 @@ public class UserService {
         }
         AuthData a = dataAccess.getAuth(listGamesRequest.authToken());
         if(a == null){
-            throw new DataAccessException("Error: unauthorized");
+            throw new UnauthorizedException();
         }
         Collection<ListGamesData> games = dataAccess.listGames();
         return new ListGamesResult(games);
@@ -101,7 +101,7 @@ public class UserService {
     public void joinGame(String authToken, JoinGameRequest joinGameRequest)throws DataAccessException{
         AuthData a = dataAccess.getAuth(authToken);
         if(a == null){
-            throw new DataAccessException("Error: unauthorized");
+            throw new UnauthorizedException();
         }
 
         if(joinGameRequest.playerColor() == null || joinGameRequest.gameID() == null) {
@@ -111,14 +111,14 @@ public class UserService {
         GameData game = dataAccess.getGame(joinGameRequest.gameID());
         if(Objects.equals(joinGameRequest.playerColor(), "WHITE")){
             if(game.whiteUsername() != null){
-                throw new DataAccessException("Error: already taken");
+                throw new AlreadyTakenException();
             }
             GameData gameData = new GameData(game.gameID(), a.username(),game.blackUsername(), game.gameName(), game.game());
             dataAccess.updateGame(gameData);
         }
         if(joinGameRequest.playerColor().equals("BLACK")){
             if(game.blackUsername() != null){
-                throw new DataAccessException("Error: already taken");
+                throw new AlreadyTakenException();
             }
             GameData gameData = new GameData(game.gameID(), game.whiteUsername(), a.username(), game.gameName(), game.game());
             dataAccess.updateGame(gameData);

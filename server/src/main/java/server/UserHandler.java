@@ -3,9 +3,7 @@ package server;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import dataaccess.DataAccess;
-import exception.BadRequestException;
-import exception.DataAccessException;
-import exception.ResponseException;
+import exception.*;
 import io.javalin.http.Context;
 import model.AuthData;
 import service.request.*;
@@ -28,8 +26,10 @@ public class UserHandler {
         } catch (BadRequestException | JsonSyntaxException e) {
             throw new ResponseException(400, "Error: bad request");
         }
-        catch (DataAccessException e) {
+        catch (AlreadyTakenException e) {
             throw new ResponseException(403, e.getMessage());
+        } catch (DataAccessException e) {
+            throw new ResponseException(500,"Error: internal server error");
         }
     }
     public void login(Context ctx) throws ResponseException{
@@ -41,8 +41,10 @@ public class UserHandler {
         catch (BadRequestException | JsonSyntaxException e){
             throw new ResponseException(400, "Error: bad request");
         }
-        catch (DataAccessException e){
-            throw new ResponseException(401, e.getMessage());
+        catch(UnauthorizedException e){
+            throw new ResponseException(401, "Error: unauthorized");
+        } catch (DataAccessException e) {
+            throw new ResponseException(500,"Error: internal server error");
         }
     }
     public void logout(Context ctx) throws ResponseException{
@@ -50,8 +52,10 @@ public class UserHandler {
                AuthData auth = this.auth.validateAuth(ctx);
                service.logout(new LogoutRequest(auth.authToken()));
            }
-           catch(DataAccessException e){
+           catch(UnauthorizedException e){
                throw new ResponseException(401, "Error: unauthorized");
+           } catch (DataAccessException e) {
+               throw new ResponseException(500,"Error: internal server error");
            }
 
     }
@@ -65,8 +69,10 @@ public class UserHandler {
         catch (BadRequestException | JsonSyntaxException e){
             throw new ResponseException(400, "Error: bad request");
         }
-        catch (DataAccessException e){
+        catch(UnauthorizedException e){
             throw new ResponseException(401, "Error: unauthorized");
+        } catch (DataAccessException e) {
+            throw new ResponseException(500,"Error: internal server error");
         }
     }
 
@@ -76,8 +82,10 @@ public class UserHandler {
             ctx.result(new Gson().toJson(service.listGames(new ListGamesRequest(auth.authToken()))));
 
         }
-        catch (DataAccessException e) {
+        catch(UnauthorizedException e){
             throw new ResponseException(401, "Error: unauthorized");
+        } catch (DataAccessException e) {
+            throw new ResponseException(500,"Error: internal server error");
         }
     }
 
@@ -91,8 +99,11 @@ public class UserHandler {
         catch (BadRequestException | JsonSyntaxException e){
             throw new ResponseException(400, "Error: bad request");
         }
-        catch (DataAccessException e){
+        catch (AlreadyTakenException e){
             throw new ResponseException(403, "Error: already taken");
+        }
+        catch (DataAccessException e){
+            throw new ResponseException(500, "Error: internal server error");
         }
 
 

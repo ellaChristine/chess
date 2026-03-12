@@ -3,6 +3,7 @@ package server;
 import dataaccess.DataAccess;
 import exception.DataAccessException;
 import exception.ResponseException;
+import exception.UnauthorizedException;
 import io.javalin.http.Context;
 import model.AuthData;
 import service.UserService;
@@ -19,11 +20,14 @@ public class AuthHandler {
            String auth = ctx.header("authorization");
            AuthData data = this.service.getAuth(auth);
            if(data == null){
-               throw new ResponseException(401, "Error: unauthorized");
+               throw new UnauthorizedException();
            }
            return data;
-       } catch (DataAccessException e) {
+       }
+       catch(UnauthorizedException e){
            throw new ResponseException(401, "Error: unauthorized");
+       } catch (DataAccessException e) {
+           throw new ResponseException(500,"Error: internal server error");
        }
     }
 }
