@@ -27,7 +27,7 @@ public class UserHandler {
             throw new ResponseException(400, "Error: bad request");
         }
         catch (AlreadyTakenException e) {
-            throw new ResponseException(403, e.getMessage());
+            throw new ResponseException(403, "Error: already taken");
         } catch (DataAccessException e) {
             throw new ResponseException(500,"Error: internal server error");
         }
