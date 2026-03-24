@@ -3,12 +3,12 @@ package server;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import dataaccess.DataAccess;
-import exception.*;
 import io.javalin.http.Context;
 import model.AuthData;
 import service.request.*;
 import service.result.*;
 import service.UserService;
+import exception.*;
 
 public class UserHandler {
     private final UserService service;

@@ -1,12 +1,10 @@
 package dataaccess;
 
 import chess.ChessGame;
+import exception.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import exception.*;
-import dataaccess.*;
 import model.*;
-import service.UserService;
 import service.result.ListGamesData;
 
 

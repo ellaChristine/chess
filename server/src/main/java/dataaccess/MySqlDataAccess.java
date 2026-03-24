@@ -2,15 +2,13 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import exception.*;
 import model.*;
 import org.mindrot.jbcrypt.BCrypt;
 import service.result.ListGamesData;
-
+import exception.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;

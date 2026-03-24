@@ -2,7 +2,6 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccess;
-import dataaccess.MemoryDataAccess;
 import dataaccess.MySqlDataAccess;
 import exception.DataAccessException;
 import exception.ResponseException;
