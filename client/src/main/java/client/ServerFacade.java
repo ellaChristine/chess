@@ -9,6 +9,7 @@ import java.net.http.*;
 import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.Collection;
 import java.util.Map;
 
 public class ServerFacade {
@@ -53,9 +54,22 @@ public class ServerFacade {
         handleResponse(response, null);
     }
 
+    public void clear() throws ResponseException {
+        var request = buildRequest("DELETE", "/db", null,null);
+        var response = sendRequest(request);
+        handleResponse(response,null);
+    }
 
+    public Collection<GameData> listGames(String authToken) throws ResponseException {
+        var request = buildRequest("GET","/game",null, authToken);
+        var response = sendRequest(request);
+        var result =handleResponse(response,ListGamesResponse.class);
+        return result.games;
+    }
 
     private record Join(String playerColor, Integer gameID){}
+
+    private record ListGamesResponse(Collection<GameData> games){}
 
     private HttpRequest buildRequest(String method, String path, Object body, String authToken){
         var request = HttpRequest.newBuilder()
