@@ -26,6 +26,7 @@ public class PreLoginUI {
     public AuthData run(){
         System.out.println("♕ Welcome to 240 chess. Type Help to get started.♕");
         while(true){
+            System.out.print("[LOGGED_OUT] >>> ");
             String line = scanner.nextLine();
             String[] parts = line.trim().split(" ");
             String command = parts[0];
@@ -34,10 +35,10 @@ public class PreLoginUI {
             }
             if(command.equalsIgnoreCase("help")){
                 System.out.print("register <USERNAME> <PASSWORD> <EMAIL> - to create an account\n" +
-                        "login <USERNAME> <PASSWORD> - to play chess\n quit - playing chess\n" +
+                        "login <USERNAME> <PASSWORD> - to play chess\nquit - playing chess\n" +
                         "help - with possible commands\n");
             } else if (command.equalsIgnoreCase("quit")) {
-                return null;
+                System.exit(0);
             } else if (command.equalsIgnoreCase("login")) {
                 if(parts.length <3){
                     System.out.println("Expected: login <USERNAME> <PASSWORD>");
@@ -49,7 +50,7 @@ public class PreLoginUI {
                         AuthData data = facade.login(username,password);
                         return data;
                     } catch (ResponseException e) {
-                        System.out.println("Error:" + e.getMessage());
+                        System.out.println(e.getMessage());
                     }
                 }
 
@@ -65,7 +66,7 @@ public class PreLoginUI {
                         AuthData registerData = facade.register(username,password, email);
                         return registerData;
                     } catch (ResponseException e) {
-                        System.out.println("Error:" + e.getMessage());
+                        System.out.println(e.getMessage());
                     }
                 }
             }

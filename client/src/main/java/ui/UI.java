@@ -2,10 +2,14 @@ package ui;
 
 import client.ServerFacade;
 import model.AuthData;
+import ui.PreLoginUI;
+
+import java.util.Scanner;
 
 public class UI {
     private final ServerFacade facade;
     private boolean loggedIn = false;
+    private final Scanner scanner = new Scanner(System.in);
 
     public UI(ServerFacade facade) {
         this.facade = facade;
@@ -14,12 +18,17 @@ public class UI {
     public void run(){
         while(true){
             if(!loggedIn){
-                //hand off to preLoginUI
+                var authData =  new PreLoginUI(facade, scanner).run();
                 //if it returns an authToken, switch to loggedIn
+                if(authData != null){
+                    loggedIn = true;
+                    System.out.println("Logged in as " + authData.username());
+                    new PostLoginUI(facade,scanner,authData.authToken()).run();
+                    loggedIn = false;
+                }
 
             } else {
-                //hand off to PostLoginUI
-                //if it logs out, switch back to !loggedIn
+
             }
         }
     }
