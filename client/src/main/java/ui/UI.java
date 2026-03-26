@@ -24,7 +24,6 @@ public class UI {
                     loggedIn = true;
                     System.out.println("Logged in as " + authData.username());
                     boolean stayLoggedIn =new PostLoginUI(facade,scanner,authData.authToken()).run();
-                    System.out.println("I am running PostLoginUI");
                     if(!stayLoggedIn){
                         loggedIn = false;
                     }
