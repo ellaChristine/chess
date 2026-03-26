@@ -332,13 +332,4 @@ public class ChessBoardDrawer {
         System.out.print("\n");
     }
 
-//    private static void drawEndBlack(){
-//        System.out.print(SET_BG_COLOR_BLACK);
-//        System.out.print(SET_TEXT_COLOR_LIGHT_GREY);
-//        System.out.print(EMPTY);
-//        System.out.print("\u2003h \u2003g \u2003f \u2003e \u2003d \u2003c \u2003b \u2003a ");
-//        System.out.print(EMPTY);
-//        System.out.print(RESET_BG_COLOR);
-//        System.out.print("\n");
-//    }
 }
