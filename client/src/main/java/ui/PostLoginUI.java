@@ -64,7 +64,23 @@ public class PostLoginUI {
                 }
 
             } else if (command.equalsIgnoreCase("join")) {
-                
+                if(parts.length <3){
+                    System.out.println("Expected: join <ID> [WHITE|BLACK]");
+                }
+                if(!parts[2].equals("WHITE") && !parts[2].equals("BLACK")){
+                    System.out.println("Expected: WHITE or BLACK got"+parts[2] + ".");
+                }
+                try{
+                    facade.joinGame(parts[2], Integer.valueOf(parts[1]), authToken);
+                    ChessBoardDrawer.draw(parts[2]);
+                } catch (ResponseException e) {
+                    System.out.println(e.getMessage());
+                }
+            } else if(command.equalsIgnoreCase("observe")){
+                if(parts.length <2){
+                    System.out.println("Expected: observe <ID>");
+                }
+                ChessBoardDrawer.draw("WHITE");
             }
         }
     }
