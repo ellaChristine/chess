@@ -74,15 +74,14 @@ public class PostLoginUI {
                 } else {
                     if (!parts[2].equals("WHITE") && !parts[2].equals("BLACK")) {
                         System.out.println("Expected: WHITE or BLACK");
-                    } else {
-                        try {
-                            facade.joinGame(parts[2], Integer.valueOf(parts[1]), authToken);
-                            ChessBoardDrawer.draw(parts[2]);
-                        } catch (ResponseException e) {
-                            System.out.println(e.getMessage());
-                        } catch (NumberFormatException e) {
-                            System.out.println("Error: game id must be a number");
-                        }
+                    }
+                    try {
+                        facade.joinGame(parts[2], Integer.valueOf(parts[1]), authToken);
+                        ChessBoardDrawer.draw(parts[2]);
+                    } catch (ResponseException e) {
+                        System.out.println(e.getMessage());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Error: game id must be a number");
                     }
                 }
             } else if(command.equalsIgnoreCase("observe")){
