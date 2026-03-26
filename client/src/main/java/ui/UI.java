@@ -23,11 +23,12 @@ public class UI {
                 if(authData != null){
                     loggedIn = true;
                     System.out.println("Logged in as " + authData.username());
-                    new PostLoginUI(facade,scanner,authData.authToken()).run();
-                    loggedIn = false;
+                    boolean stayLoggedIn =new PostLoginUI(facade,scanner,authData.authToken()).run();
+                    System.out.println("I am running PostLoginUI");
+                    if(!stayLoggedIn){
+                        loggedIn = false;
+                    }
                 }
-
-            } else {
 
             }
         }

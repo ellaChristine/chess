@@ -44,7 +44,8 @@ public class ServerFacade {
         var body = Map.of("gameName", gameName);
         var request = buildRequest("POST", "/game",body, authToken);
         var response = sendRequest(request);
-        return handleResponse(response,Integer.class);
+        var result = handleResponse(response,CreateGameResponse.class);
+        return result.gameID;
     }
 
     public void joinGame(String playerColor, Integer gameID, String authToken) throws ResponseException {
@@ -66,6 +67,8 @@ public class ServerFacade {
         var result =handleResponse(response,ListGamesResponse.class);
         return result.games;
     }
+
+    private record CreateGameResponse(int gameID){}
 
     private record Join(String playerColor, Integer gameID){}
 

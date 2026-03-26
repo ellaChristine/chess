@@ -3,7 +3,9 @@ package ui;
 import client.ServerFacade;
 import exception.ResponseException;
 import model.AuthData;
+import model.GameData;
 
+import java.util.Collection;
 import java.util.Scanner;
 
 public class PostLoginUI {
@@ -46,12 +48,23 @@ public class PostLoginUI {
                     String name = parts[1];
                     try{
                         facade.createGame(name,authToken);
-                        return true;
                     } catch (ResponseException e) {
                         System.out.println(e.getMessage());                    }
                 }
             } else if (command.equalsIgnoreCase("list")) {
+                try{
+                    Collection<GameData> list = facade.listGames(authToken);
+                    int x = 1;
+                    for(GameData item:list){
+                        System.out.println(item.gameID() + ". " + item.gameName() + " - white: " + item.whiteUsername() +
+                                ", black: " + item.blackUsername());
+                    }
+                }catch (ResponseException e){
+                    System.out.println(e.getMessage());
+                }
 
+            } else if (command.equalsIgnoreCase("join")) {
+                
             }
         }
     }
