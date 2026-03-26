@@ -2,9 +2,6 @@ package ui;
 /*
 
  */
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Random;
 
 import static ui.EscapeSequences.*;
 
@@ -20,7 +17,8 @@ public class ChessBoardDrawer {
     }
 
     private static void drawBoardForBlack(){
-        ChessBoardDrawer.drawEndBlack();
+        String[] order = {"h","g","f","e","d","c","b","a"};
+        ChessBoardDrawer.drawEnd(order);
         System.out.print(SET_BG_COLOR_BLACK);
         System.out.print("\u20031 ");
         System.out.print(SET_TEXT_BOLD);
@@ -113,13 +111,14 @@ public class ChessBoardDrawer {
         System.out.print(" 8\u2003");
         System.out.print(RESET_BG_COLOR);
         System.out.print("\n");
-        ChessBoardDrawer.drawEndBlack();
+        ChessBoardDrawer.drawEnd(order);
 
 
     }
 
     private static void drawBoardForWhite(){
-        ChessBoardDrawer.drawEndWhite();
+        String[] order = {"a","b","c","d","e","f","g","h"};
+        ChessBoardDrawer.drawEnd(order);
         System.out.print(SET_BG_COLOR_BLACK);
         System.out.print("\u20038 ");
         System.out.print(SET_TEXT_BOLD);
@@ -211,7 +210,7 @@ public class ChessBoardDrawer {
         System.out.print(" 1\u2003");
         System.out.print(RESET_BG_COLOR);
         System.out.print("\n");
-        ChessBoardDrawer.drawEndWhite();
+        ChessBoardDrawer.drawEnd(order);
 
     }
 
@@ -323,23 +322,23 @@ public class ChessBoardDrawer {
         }
     }
 
-    private static void drawEndWhite(){
+    private static void drawEnd(String[] order){
         System.out.print(SET_BG_COLOR_BLACK);
         System.out.print(SET_TEXT_COLOR_LIGHT_GREY);
         System.out.print(EMPTY);
-        System.out.print("\u2003a \u2003b \u2003c \u2003d \u2003e \u2003f \u2003g \u2003h ");
+        System.out.print("\u2003"+order[0]+" \u2003"+order[1]+" \u2003"+order[2]+" \u2003"+order[3]+" \u2003"+order[4]+" \u2003"+order[5]+" \u2003"+order[6]+" \u2003"+order[7] +" ");
         System.out.print(EMPTY);
         System.out.print(RESET_BG_COLOR);
         System.out.print("\n");
     }
 
-    private static void drawEndBlack(){
-        System.out.print(SET_BG_COLOR_BLACK);
-        System.out.print(SET_TEXT_COLOR_LIGHT_GREY);
-        System.out.print(EMPTY);
-        System.out.print("\u2003h \u2003g \u2003f \u2003e \u2003d \u2003c \u2003b \u2003a ");
-        System.out.print(EMPTY);
-        System.out.print(RESET_BG_COLOR);
-        System.out.print("\n");
-    }
+//    private static void drawEndBlack(){
+//        System.out.print(SET_BG_COLOR_BLACK);
+//        System.out.print(SET_TEXT_COLOR_LIGHT_GREY);
+//        System.out.print(EMPTY);
+//        System.out.print("\u2003h \u2003g \u2003f \u2003e \u2003d \u2003c \u2003b \u2003a ");
+//        System.out.print(EMPTY);
+//        System.out.print(RESET_BG_COLOR);
+//        System.out.print("\n");
+//    }
 }
