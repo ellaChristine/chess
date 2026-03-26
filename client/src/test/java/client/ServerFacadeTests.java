@@ -1,8 +1,11 @@
 package client;
 
 import exception.ResponseException;
+import model.GameData;
 import org.junit.jupiter.api.*;
 import server.Server;
+
+import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,7 +29,7 @@ public class ServerFacadeTests {
     }
 
     @AfterEach
-    void clear() throws ResponseException {facade.clear();}
+    void clearFacade() throws ResponseException {facade.clear();}
 
     @Test
     void register() throws Exception {
@@ -59,7 +62,57 @@ public class ServerFacadeTests {
         assertDoesNotThrow(() -> facade.logout(authData.authToken()));
     }
 
+    @Test
+    void logoutFail() throws Exception{
+        var authData = facade.register("player1", "password", "p1@email.com");
+        assertThrows(ResponseException.class, () -> facade.logout("123gnjoi"));
+    }
 
+    @Test
+    void createGame() throws Exception{
+        var authData = facade.register("player1", "password", "p1@email.com");
+        Integer gameID = facade.createGame("name", authData.authToken());
+        assertNotNull(gameID);
+    }
 
+    @Test
+    void createGameFail() throws Exception{
+        var authData = facade.register("player1", "password", "p1@email.com");
+        assertThrows(ResponseException.class, () -> facade.createGame("name", "123454gfd"));
+    }
 
+    @Test
+    void join() throws Exception{
+        var authData = facade.register("player1", "password", "p1@email.com");
+        facade.createGame("name", authData.authToken());
+        assertDoesNotThrow(() -> facade.joinGame("WHITE", 1, authData.authToken()));
+    }
+
+    @Test
+    void joinFail() throws Exception{
+        var authData = facade.register("player1", "password", "p1@email.com");
+        assertThrows(ResponseException.class, () -> facade.joinGame("WHITE", 1, authData.authToken()));
+    }
+
+    @Test
+    void listGames() throws Exception{
+        var authData = facade.register("player1", "password", "p1@email.com");
+        facade.createGame("game", authData.authToken());
+        Collection<GameData> list = facade.listGames(authData.authToken());
+        assertNotNull(list);
+    }
+
+    @Test
+    void listGamesFail() throws Exception{
+        var authData = facade.register("player1", "password", "p1@email.com");
+        assertThrows(ResponseException.class, () -> facade.listGames("123djiop"));
+    }
+
+    @Test
+    void clear() throws Exception{
+        var authData = facade.register("player1", "password", "p1@email.com");
+        facade.createGame("name", authData.authToken());
+        facade.clear();
+        assertThrows(ResponseException.class, () -> facade.listGames(authData.authToken()));
+    }
 }
