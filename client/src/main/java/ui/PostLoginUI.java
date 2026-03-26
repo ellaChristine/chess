@@ -5,7 +5,9 @@ import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Scanner;
 
 public class PostLoginUI {
@@ -61,37 +63,71 @@ public class PostLoginUI {
                     Collection<GameData> list = facade.listGames(authToken);
                     int x = 1;
                     for(GameData item:list){
-                        System.out.println(item.gameID() + ". " + item.gameName() + " - white: " + item.whiteUsername() +
+                        System.out.println(x + ". " + item.gameName() + " - white: " + item.whiteUsername() +
                                 ", black: " + item.blackUsername());
+                        games.add(item);
+                        x= x+1;
+
                     }
                 }catch (ResponseException e){
                     System.out.println(e.getMessage());
                 }
 
             } else if (command.equalsIgnoreCase("join")) {
-                if(parts.length <3){
-                    System.out.println("Expected: join <ID> [WHITE|BLACK]");
-                } else {
-                    if (!parts[2].equals("WHITE") && !parts[2].equals("BLACK")) {
-                        System.out.println("Expected: WHITE or BLACK");
-                    }
-                    try {
-                        facade.joinGame(parts[2], Integer.valueOf(parts[1]), authToken);
-                        ChessBoardDrawer.draw(parts[2]);
-                    } catch (ResponseException e) {
-                        System.out.println(e.getMessage());
-                    } catch (NumberFormatException e) {
-                        System.out.println("Error: game id must be a number");
-                    }
-                }
+                this.join(parts);
             } else if(command.equalsIgnoreCase("observe")){
-                if(parts.length <2){
-                    System.out.println("Expected: observe <ID>");
+                this.observe(parts);
+            }
+
+        }
+    }
+
+    private void join(String[] parts){
+        if(parts.length <3){
+            System.out.println("Expected: join <ID> [WHITE|BLACK]");
+        } else {
+            if (!parts[2].equals("WHITE") && !parts[2].equals("BLACK")) {
+                System.out.println("Expected: WHITE or BLACK");
+            }
+            try {
+                int gameNumber = Integer.parseInt(parts[1]);
+                if(gameNumber <1|| gameNumber > games.size()){
+                    System.out.println("Error: invalid game number, please list games and try again");
                 }
-                ChessBoardDrawer.draw("WHITE");
+                else{
+                    facade.joinGame(parts[2], gameNumber, authToken);
+                    ChessBoardDrawer.draw(parts[2]);
+                }
+
+            } catch (ResponseException e) {
+                System.out.println(e.getMessage());
+            } catch (NumberFormatException e) {
+                System.out.println("Error: game id must be a number");
             }
         }
     }
+
+    private void observe(String[] parts){
+        if(parts.length <2){
+            System.out.println("Expected: observe <ID>");
+        }
+        else{
+            try{
+                Integer gameID = Integer.parseInt(parts[1]);
+                if(gameID < 1 || gameID > games.size()){
+                    System.out.println("Error: invalid game number, please list games and try again");
+                }
+                else {
+                    ChessBoardDrawer.draw("WHITE");
+                }
+            } catch (NumberFormatException e){
+                System.out.println("Error: game id must be a number");
+            }
+
+        }
+    }
+
+    private List<GameData> games = new ArrayList<>();
 
     private enum Options{
         create,
